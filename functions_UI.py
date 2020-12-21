@@ -15,7 +15,7 @@ def initiate_ui_window():
 
 def main_screen_properties():
     main_screen.title("iStockSoftware")
-    main_screen.tk.call('wm', 'iconphoto', main_screen._w, tk.PhotoImage(file='stocks_software/working_directory/stocks.gif'))
+    main_screen.tk.call('wm', 'iconphoto', main_screen._w, tk.PhotoImage(file='stocks.gif'))
 
 def create_main_canvas():
     main_canvas=tk.Canvas(main_screen, width=500, height=100, relief = 'solid', bg="#eff7a2")
@@ -23,7 +23,7 @@ def create_main_canvas():
 
 def user_entry_frame():
     ui_frame = tk.LabelFrame(main_screen, text='Enter 5 tickers separated by " ":', bg="#eff7a2")
-    ui_frame.grid(row=0, column=0)
+    ui_frame.grid(row=0, column=0, sticky="nsew")
 
     global tickers_entry
     tickers_entry=tk.Entry(ui_frame, relief="solid", borderwidth=2)
@@ -50,7 +50,7 @@ def execute_run_button():
 
 def create_tickers_canvas():
     tickers_canvas=tk.Canvas(main_screen, width=500, height=100, bg="#eff7a2")
-    tickers_canvas.grid(row=1, column=0)
+    tickers_canvas.grid(row=1, column=0, sticky="nsew")
 
     #Creating Ticker tittles in window
     global stocks_frame
@@ -72,24 +72,39 @@ def create_table_rows_columns():
 
     begin_column = 1
     for ticker in final_tickers_list:
-        detail_name=tk.Label(stocks_frame,text=" ")
-        detail_name.grid(row=1, column=begin_column, padx=30)
+        detail_name=tk.Label(stocks_frame,text=" ", bg="#eff7a2")
+        detail_name.grid(row=1, column=begin_column)
         begin_column+=1
         detail_name=tk.Label(stocks_frame,text=ticker, bg="#b8e7f9", relief="sunken")
-        detail_name.grid(row=1, column=begin_column, padx=30)
+        detail_name.grid(row=1, column=begin_column)
         begin_column+=1
 
 def push_ticker_values():
     begin_column = 1
     for ticker in final_tickers_list:
         begin_row = 2
-        value_field=tk.Label(stocks_frame, text=" ")
+        value_field=tk.Label(stocks_frame, text=" ", bg="#eff7a2")
         value_field.grid(row=begin_row, column=begin_column)
         begin_column+=1
-        for detail,value in fetched_tickers_instances_dict[ticker].retrive_ticker_detail_dict().items():
-            if detail in ["regularMarketChange", "regularMarketChangePercent"]: value=str(value)[0:5]
-            if detail == "shortName": value=str(value)[0:12]                
-            value_field=tk.Label(stocks_frame, text=value)
-            value_field.grid(row=begin_row, column=begin_column)
-            begin_row +=1
+        try:
+            for detail,value in fetched_tickers_instances_dict[ticker].retrive_ticker_detail_dict().items():
+                if detail in ["regularMarketChange", "regularMarketChangePercent"]: value=str(value)[0:5]
+                if detail == "shortName": value=str(value)[0:12]                
+                value_field=tk.Label(stocks_frame, text=value)
+                value_field.grid(row=begin_row, column=begin_column, sticky="nsew")
+                begin_row +=1
+        except:
+            extra_ticker=default_tickers_list.pop()
+            for detail,value in fetched_tickers_instances_dict[extra_ticker].retrive_ticker_detail_dict().items():
+                if detail in ["regularMarketChange", "regularMarketChangePercent"]: value=str(value)[0:5]
+                if detail == "shortName": value=str(value)[0:12]                
+                value_field=tk.Label(stocks_frame, text=value)
+                value_field.grid(row=begin_row, column=begin_column, sticky="nsew")
+                begin_row +=1
+                detail_name=tk.Label(stocks_frame, text="", bg="#b8e7f9", relief="sunken")
+                detail_name.grid(row=1, column=begin_column)
+                detail_name.destroy()
+                detail_name=tk.Label(stocks_frame, text=extra_ticker, bg="#b8e7f9", relief="sunken")
+                detail_name.grid(row=1, column=begin_column)
         begin_column+=1
+    main_screen.after(5000, push_ticker_values)

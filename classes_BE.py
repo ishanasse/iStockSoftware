@@ -6,14 +6,9 @@ class Ticker:
     yf_url='https://query1.finance.yahoo.com/v7/finance/quote?symbols='
 
     #Initialize the class
-    def __init__(self, ticker):#self=stock1 ticker="PING"
-        self.ticker = ticker #stock1.ticker = "PING"
-        self.ticker_json_url=Ticker.yf_url+self.ticker#+"PING"
-    
-    # @classmethod
-    # def create_ticker_instances(cls, ticker):
-    #     return cls(ticker)
-
+    def __init__(self, ticker):
+        self.ticker = ticker
+        self.ticker_json_url=Ticker.yf_url+self.ticker
 
     def __get_ticker_json(self):
     #Making this function private as the instances should do not need to call it.
@@ -51,9 +46,3 @@ class Ticker:
     def retrive_ticker_detail_dict(self):
         ticker_details_dict=Ticker.__get_ticker_details_dict(self)
         return ticker_details_dict
-        # for k,v in ticker_details_dict.items():
-        #     return(k,v)
-
-# stock1=Ticker("PING")
-# # print(stock1.ticker_json_url)
-# stock1.print_ticker_details()

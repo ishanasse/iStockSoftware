@@ -2,6 +2,9 @@ import re
 from classes_BE import Ticker
 
 
+##### Define variables #####
+default_tickers_list=["PXT.TO", "HUBS", "PING", "BNS.TO", "AAPL", "CRM", "WORK", "BB.TO", "SU.TO", "SAIL"]
+
 ########## Define Functions ##########
 
 def get_user_tickers_list(user_input):
@@ -30,7 +33,6 @@ def validate_ticker(ticker: str):
 def get_final_tickers_list(user_tickers_list: list):
     #Define variables for the function
     #ticker_alias_list=["stock5", "stock4", "stock3", "stock2", "stock1"]
-    default_tickers_list=["PXT.TO", "HUBS", "PING", "BNS.TO", "AAPL", "CRM", "WORK", "BB.TO", "SU.TO", "SAIL"]
     final_tickers_list=[]
     #final_tickers_dict={}
     for ticker in user_tickers_list:
@@ -43,16 +45,9 @@ def get_final_tickers_list(user_tickers_list: list):
     while len(final_tickers_list) < 5:
         final_tickers_list.append(default_tickers_list.pop())
     return final_tickers_list
-    # for alias in ticker_alias_list:
-    #     final_tickers_dict[alias]=validated_user_tickers_list.pop()
-    # return final_tickers_dict
-
-# def create_ticker_instances(validated_user_tickers_list: list):
-#     for ticker in validated_user_tickers_list:
-#         Ticker.create_ticker_instances(ticker)
 
 def create_instances_dict(final_tickers_list):
     fetched_tickers_instances_dict={}
-    for ticker in final_tickers_list:
+    for ticker in final_tickers_list+default_tickers_list:
         fetched_tickers_instances_dict[ticker]=Ticker(ticker)
     return fetched_tickers_instances_dict
