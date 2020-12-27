@@ -3,23 +3,20 @@ import tkinter as tk
 from functions_BE_with_UI import *
 import time
 
+#Global variables
+run_counter = 1
+
 #Adding dependency Modules/Packages
 def initiate_ui_window():
     global main_screen
     main_screen=tk.Tk()
-    main_screen_properties()
-    create_main_canvas()
+    main_screen.title("iStockSoftware")
+    main_screen.tk.call('wm', 'iconphoto', main_screen._w, tk.PhotoImage(file='stocks.gif'))
     user_entry_frame()
 
     main_screen.mainloop()
 
-def main_screen_properties():
-    main_screen.title("iStockSoftware")
-    main_screen.tk.call('wm', 'iconphoto', main_screen._w, tk.PhotoImage(file='stocks.gif'))
 
-def create_main_canvas():
-    main_canvas=tk.Canvas(main_screen, width=500, height=100, relief = 'solid', bg="#eff7a2")
-    main_canvas.grid(row=0, column=0)
 
 def user_entry_frame():
     ui_frame = tk.LabelFrame(main_screen, text='Enter 5 tickers separated by " ":', bg="#eff7a2")
@@ -32,7 +29,7 @@ def user_entry_frame():
     run_button=tk.Button(ui_frame,text='Run', relief="raised", command= execute_run_button)
     run_button.grid(row=0, column=1)
 
-    create_tickers_canvas()
+    create_stocks_frame()
 
 
 
@@ -48,14 +45,12 @@ def execute_run_button():
     push_ticker_values()
 
 
-def create_tickers_canvas():
-    tickers_canvas=tk.Canvas(main_screen, width=500, height=100, bg="#eff7a2")
-    tickers_canvas.grid(row=1, column=0, sticky="nsew")
+def create_stocks_frame():
 
     #Creating Ticker tittles in window
     global stocks_frame
-    stocks_frame=tk.LabelFrame(tickers_canvas, text="  Your Stocks being displayed:  ", fg="#007cc7", bg="#eff7a2")
-    stocks_frame.grid(row=0, column=0)
+    stocks_frame=tk.LabelFrame(main_screen, text="  Your Stocks being displayed:  ", fg="#007cc7", bg="#eff7a2")
+    stocks_frame.grid(row=1, column=0)
     
     stocks_label=tk.Label(stocks_frame, text= " Stocks: ", bg="#eff7a2")
     stocks_label.grid(row=1, column=0)
@@ -76,7 +71,7 @@ def create_table_rows_columns():
         detail_name.grid(row=1, column=begin_column)
         begin_column+=1
         detail_name=tk.Label(stocks_frame,text=ticker, bg="#b8e7f9", relief="sunken")
-        detail_name.grid(row=1, column=begin_column)
+        detail_name.grid(row=1, column=begin_column, sticky = "nsew")
         begin_column+=1
 
 def push_ticker_values():
@@ -88,23 +83,27 @@ def push_ticker_values():
         begin_column+=1
         try:
             for detail,value in fetched_tickers_instances_dict[ticker].retrive_ticker_detail_dict().items():
-                if detail in ["regularMarketChange", "regularMarketChangePercent"]: value=str(value)[0:5]
+                if detail == "regularMarketChange": value = str(value)[0:5]
+                if detail == "regularMarketChangePercent": value = str(value)[0:5]+"%"
                 if detail == "shortName": value=str(value)[0:12]                
-                value_field=tk.Label(stocks_frame, text=value)
+                value_field=tk.Label(stocks_frame, text = value)
                 value_field.grid(row=begin_row, column=begin_column, sticky="nsew")
                 begin_row +=1
         except:
-            extra_ticker=default_tickers_list.pop()
+            global default_tickers_list
+            extra_ticker = default_tickers_list.pop()
+            if len(default_tickers_list) < 1:
+                default_tickers_list = ["PXT.TO", "HUBS", "PING", "BNS.TO", "AAPL", "CRM", "WORK", "BB.TO", "SU.TO", "SAIL"]
             for detail,value in fetched_tickers_instances_dict[extra_ticker].retrive_ticker_detail_dict().items():
                 if detail in ["regularMarketChange", "regularMarketChangePercent"]: value=str(value)[0:5]
                 if detail == "shortName": value=str(value)[0:12]                
-                value_field=tk.Label(stocks_frame, text=value)
+                value_field=tk.Label(stocks_frame, text = value)
                 value_field.grid(row=begin_row, column=begin_column, sticky="nsew")
                 begin_row +=1
-                detail_name=tk.Label(stocks_frame, text="", bg="#b8e7f9", relief="sunken")
-                detail_name.grid(row=1, column=begin_column)
+                detail_name = tk.Label(stocks_frame, text = "", bg="#b8e7f9", relief="sunken")
+                detail_name.grid(row=1, column=begin_column, sticky = "nsew")
                 detail_name.destroy()
-                detail_name=tk.Label(stocks_frame, text=extra_ticker, bg="#b8e7f9", relief="sunken")
-                detail_name.grid(row=1, column=begin_column)
+                detail_name = tk.Label(stocks_frame, text = extra_ticker, bg="#b8e7f9", relief="sunken")
+                detail_name.grid(row=1, column=begin_column, sticky = "nsew")
         begin_column+=1
-    main_screen.after(5000, push_ticker_values)
+    main_screen.after(10000, push_ticker_values)
