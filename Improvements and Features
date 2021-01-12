@@ -1,4 +1,11 @@
+Dec 26
 1. Only run code for n<=5 tickers
-2. Keep UI Window precise
-3. Destroy old frames on re-run
-4. clear/delete labels before rewriting them
+2. Keep UI Window precise DONE
+3. Destroy old frames on re-run DONE
+4. clear/delete labels before rewriting them DONE
+5. Add user defined refresh interval DONE
+6. Print logs DONE
+
+Jan 11
+7. Resolve the memory leak issues during longer runtime
+8. Change value colors based on variation in the ticker price
